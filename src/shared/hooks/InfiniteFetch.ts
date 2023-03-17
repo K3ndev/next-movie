@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
 const InfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
   const delayRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchPokemon = async ({ pageParam = url }) => {
+  const fetchPokemons = async ({ pageParam = url }) => {
     const res = await fetch(pageParam);
     const { results, next } = await res.json();
 
@@ -15,8 +15,8 @@ const InfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
   };
 
   const { data: DATA, fetchNextPage } = useInfiniteQuery(
-    ['pokemon'],
-    fetchPokemon,
+    ['pokemons'],
+    fetchPokemons,
     {
       getNextPageParam: (lastPage) => {
         return lastPage.nextPage;

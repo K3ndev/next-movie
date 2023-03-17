@@ -1,24 +1,19 @@
 import { FormEvent, useRef, useState } from 'react';
 import Head from 'next/head';
 import { useIntersection } from '@mantine/hooks';
-import { Header, Footer } from '../../shared/components/index';
+import { Header, Footer, Pokemon } from '../../shared/components/index';
 import InfiniteFetch from '../../shared/hooks/InfiniteFetch';
-
-// import Image from 'next/image';
-// import { Inter } from 'next/font/google';
-
-// const inter = Inter({ subsets: ['latin'] });
+// import FetchPokemon from '../../shared/hooks/FetchPokemon';
 
 export default function Home(props: any) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data } = props;
   // i dint not included this in ui, because it will cause a problem in styling, but i think its good in seo
   const { ref, entry } = useIntersection();
-  // const delayRef = useRef<NodeJS.Timeout | null>(null);
   const searchInput = useRef<HTMLInputElement>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const url = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20';
-  const { DATA } = InfiniteFetch(entry, url);
+  const pokemonsUrl = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20';
+  const { DATA: pokemonsData } = InfiniteFetch(entry, pokemonsUrl);
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,21 +47,21 @@ export default function Home(props: any) {
             </form>
           </div>
 
-          <div className="mx-auto grid max-w-7xl grid-cols-4 gap-2">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
             {!isSearching &&
-              DATA?.pages.map((group: any) =>
-                group.response.map((pokemon: any) => (
-                  <div key={pokemon.name} className=" ">
-                    {/* we are going to fetch from pokemon.url */}
-                    <div className="h-56 bg-slate-600 p-3">{pokemon.name}</div>
-                    {/* {console.log(pokemon)} */}
-                  </div>
-                ))
+              pokemonsData?.pages.map((group: any) =>
+                group.response.map((pokemon: any) => {
+                  return (
+                    <div key={pokemon.name}>
+                      <Pokemon pokemonURL={pokemon.url} />
+                    </div>
+                  );
+                })
               )}
           </div>
         </section>
 
-        {DATA && !isSearching && (
+        {pokemonsData && !isSearching && (
           <section className="mx-auto max-w-7xl">
             <div className="flex justify-center bg-red-300 ">
               <div ref={ref} className="text-red-900">
