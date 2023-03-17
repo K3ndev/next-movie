@@ -1,9 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import Head from 'next/head';
-import { useInfiniteQuery } from '@tanstack/react-query';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { useIntersection } from '@mantine/hooks';
 import { Header, Footer } from '../../shared/components/index';
+import InfiniteFetch from '../../shared/hooks/InfiniteFetch';
 
 // import Image from 'next/image';
 // import { Inter } from 'next/font/google';
@@ -11,40 +10,20 @@ import { Header, Footer } from '../../shared/components/index';
 // const inter = Inter({ subsets: ['latin'] });
 
 export default function Home(props: any) {
-  // for seo? haha lol
-  // probably jusr render this then render the 2nd from react-query
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data } = props;
-
-  const fetchPokemon = async ({
-    pageParam = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20',
-  }) => {
-    const res = await fetch(pageParam);
-    const { results, next } = await res.json();
-    return { response: results, nextPage: next };
-  };
-
-  const { data: DATA, fetchNextPage } = useInfiniteQuery(
-    ['pokemon'],
-    fetchPokemon,
-    {
-      getNextPageParam: (lastPage) => {
-        return lastPage.nextPage;
-      },
-    }
-  );
-
+  // i dint not included this in ui, because it will cause a problem in styling, but i think its good in seo
   const { ref, entry } = useIntersection();
-  const delayRef = useRef<NodeJS.Timeout | null>(null);
+  // const delayRef = useRef<NodeJS.Timeout | null>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const url = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20';
+  const { DATA } = InfiniteFetch(entry, url);
 
-  useEffect(() => {
-    if (entry?.isIntersecting) {
-      delayRef.current = setTimeout(fetchNextPage, 1000);
-    }
-    return () => {
-      clearTimeout(delayRef.current!);
-    };
-  }, [entry?.isIntersecting, fetchNextPage]);
+  const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSearching(true);
+  };
 
   return (
     <>
@@ -56,17 +35,38 @@ export default function Home(props: any) {
         <title>Next Pokemon | Home page </title>
       </Head>
       <Header />
-      <main className="bg-[#D9D9D9]">
-        <section className="mx-auto grid max-w-7xl grid-cols-4 gap-2">
-          {DATA?.pages.map((group) =>
-            group.response.map((pokemon: any) => (
-              <div key={pokemon.name} className=" ">
-                <div className="h-56 bg-slate-600 p-3">{pokemon.name}</div>
-              </div>
-            ))
-          )}
+      <main className="bg-[#D9D9D9] ">
+        <section className="my-3">
+          <div className="mb-3 flex justify-center">
+            <form
+              onSubmit={(e) => {
+                onSubmitHandler(e);
+              }}
+            >
+              <input
+                type="text"
+                placeholder="search"
+                className="w-96"
+                ref={searchInput}
+              />
+            </form>
+          </div>
+
+          <div className="mx-auto grid max-w-7xl grid-cols-4 gap-2">
+            {!isSearching &&
+              DATA?.pages.map((group: any) =>
+                group.response.map((pokemon: any) => (
+                  <div key={pokemon.name} className=" ">
+                    {/* we are going to fetch from pokemon.url */}
+                    <div className="h-56 bg-slate-600 p-3">{pokemon.name}</div>
+                    {/* {console.log(pokemon)} */}
+                  </div>
+                ))
+              )}
+          </div>
         </section>
-        {DATA && (
+
+        {DATA && !isSearching && (
           <section className="mx-auto max-w-7xl">
             <div className="flex justify-center bg-red-300 ">
               <div ref={ref} className="text-red-900">

@@ -13,5 +13,6 @@ export async function getServerSideProps() {
     `https://pokeapi.co/api/v2/pokemon?offset=0&limit=20`
   );
   const data = await res.json();
-  return { props: { data } };
+  const filter = data?.results;
+  return { props: { data: filter } };
 }

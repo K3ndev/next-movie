@@ -23,7 +23,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".*.cjs",
-    "./tailwind.config.js"
+    "./tailwind.config.js",
+    "src/shared/hooks/InfiniteFetch.ts"
   ],
   "exclude": ["node_modules"]
 }
