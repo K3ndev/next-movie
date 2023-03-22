@@ -1,7 +1,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import Head from 'next/head';
 import { useIntersection } from '@mantine/hooks';
-import { Header, Footer, Pokemon } from '../../shared/components/index';
+import { Header, Footer, Pokemons } from '../../shared/components/index';
 import InfiniteFetch from '../../shared/hooks/InfiniteFetch';
 // import FetchPokemon from '../../shared/hooks/FetchPokemon';
 
@@ -53,7 +53,7 @@ export default function Home(props: any) {
                 group.response.map((pokemon: any) => {
                   return (
                     <div key={pokemon.name}>
-                      <Pokemon pokemonURL={pokemon.url} />
+                      <Pokemons pokemonURL={pokemon.url} />
                     </div>
                   );
                 })
