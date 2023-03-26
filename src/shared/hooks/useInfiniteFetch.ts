@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 // https://pokeapi.co/api/v2/pokemon?offset=0&limit=20
 
 // eslint-disable-next-line import/prefer-default-export
-const InfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
+const useInfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
   const delayRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchPokemons = async ({ pageParam = url }) => {
@@ -35,4 +35,4 @@ const InfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
   return { DATA };
 };
 
-export default InfiniteFetch;
+export default useInfiniteFetch;

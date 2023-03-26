@@ -1,23 +1,25 @@
 import { FormEvent, useRef, useState } from 'react';
 import Head from 'next/head';
 import { useIntersection } from '@mantine/hooks';
+import useInfiniteFetch from '@/shared/hooks/useInfiniteFetch';
 import { Header, Footer, Pokemons } from '../../shared/components/index';
-import InfiniteFetch from '../../shared/hooks/InfiniteFetch';
 // import FetchPokemon from '../../shared/hooks/FetchPokemon';
 
 export default function Home(props: any) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data } = props;
   // i dint not included this in ui, because it will cause a problem in styling, but i think its good in seo
-  const { ref, entry } = useIntersection();
+  const { ref: interactionRef, entry } = useIntersection();
   const searchInput = useRef<HTMLInputElement>(null);
   const [isSearching, setIsSearching] = useState(false);
   const pokemonsUrl = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20';
-  const { DATA: pokemonsData } = InfiniteFetch(entry, pokemonsUrl);
+  const { DATA: pokemonsData } = useInfiniteFetch(entry, pokemonsUrl);
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSearching(true);
+
+    console.log(searchInput?.current?.value);
   };
 
   return (
@@ -64,7 +66,7 @@ export default function Home(props: any) {
         {pokemonsData && !isSearching && (
           <section className="mx-auto max-w-7xl">
             <div className="flex justify-center bg-red-300 ">
-              <div ref={ref} className="text-red-900">
+              <div ref={interactionRef} className="text-red-900">
                 Fetching
               </div>
             </div>
