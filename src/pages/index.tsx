@@ -9,9 +9,7 @@ const HomePage: React.FC = (props: any) => {
 export default HomePage;
 
 export async function getServerSideProps() {
-  const res = await fetch(
-    `https://pokeapi.co/api/v2/pokemon?offset=0&limit=20`
-  );
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=5000`);
   const data = await res.json();
   const filter = data?.results;
   return { props: { data: filter } };

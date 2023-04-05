@@ -4,6 +4,7 @@ import { useIntersection } from '@mantine/hooks';
 import useInfiniteFetch from '@/shared/hooks/useInfiniteFetch';
 import { Header, Footer, Pokemons } from '../../shared/components/index';
 // import FetchPokemon from '../../shared/hooks/FetchPokemon';
+import localData from '../../shared/data/pokemon.json';
 
 export default function Home(props: any) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -12,14 +13,36 @@ export default function Home(props: any) {
   const { ref: interactionRef, entry } = useIntersection();
   const searchInput = useRef<HTMLInputElement>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [filteredData, setFilteredData] = useState<any>();
   const pokemonsUrl = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20';
   const { DATA: pokemonsData } = useInfiniteFetch(entry, pokemonsUrl);
+  // const [filteredData, setFilteredData] = useState<any>();
+
+  const filterPokemon = (dataPokemon: any, pokemonName: any) => {
+    return dataPokemon.results.filter((item: { name: string }) => {
+      return item.name.includes(pokemonName);
+    });
+  };
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSearching(true);
 
-    console.log(searchInput?.current?.value);
+    if (searchInput?.current?.value === '') {
+      setIsSearching(false);
+    }
+
+    const fetchPokemon = async () => {
+      // const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=5000');
+      // const dataPokemon = await res.json();
+
+      // return dataPokemon;
+      return localData;
+    };
+
+    fetchPokemon().then((dataPokemon) => {
+      setFilteredData(filterPokemon(dataPokemon, searchInput?.current?.value));
+    });
   };
 
   return (
@@ -60,6 +83,15 @@ export default function Home(props: any) {
                   );
                 })
               )}
+
+            {isSearching &&
+              filteredData?.map((pokemon: any) => {
+                return (
+                  <div key={pokemon.name}>
+                    <Pokemons pokemonURL={pokemon.url} />
+                  </div>
+                );
+              })}
           </div>
         </section>
 

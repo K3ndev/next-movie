@@ -6,11 +6,16 @@ const Pokemon = () => {
   const router = useRouter();
   const { id } = router.query;
 
+  // eslint-disable-next-line consistent-return
   const fetchPokemon = async () => {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    const data = await res.json();
+    try {
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+      const data = await res.json();
 
-    return data;
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const { data, isLoading, refetch, isFetching } = useQuery(

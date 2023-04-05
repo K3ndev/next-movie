@@ -35,7 +35,9 @@ export function Pokemons(props: PokemonType) {
       >
         <div className="max-h-80 w-full overflow-hidden bg-black	">
           <Image
-            src={pokemonDATA.sprites.other.dream_world.front_default || ''}
+            src={
+              pokemonDATA.sprites.other['official-artwork'].front_default || ''
+            }
             alt="pokemon"
             width={200}
             height={200}
