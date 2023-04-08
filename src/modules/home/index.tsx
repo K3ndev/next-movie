@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useIntersection } from '@mantine/hooks';
 import useInfiniteFetch from '@/shared/hooks/useInfiniteFetch';
@@ -6,12 +6,9 @@ import { Header, Footer, Pokemons } from '../../shared/components/index';
 // import FetchPokemon from '../../shared/hooks/FetchPokemon';
 import localData from '../../shared/data/pokemon.json';
 
-export default function Home(props: any) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data } = props;
-  // i dint not included this in ui, because it will cause a problem in styling, but i think its good in seo
+export default function Home() {
   const { ref: interactionRef, entry } = useIntersection();
-  const searchInput = useRef<HTMLInputElement>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
   const [isSearching, setIsSearching] = useState(false);
   const [filteredData, setFilteredData] = useState<any>();
   const pokemonsUrl = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20';
@@ -20,30 +17,52 @@ export default function Home(props: any) {
 
   const filterPokemon = (dataPokemon: any, pokemonName: any) => {
     return dataPokemon.results.filter((item: { name: string }) => {
-      return item.name.includes(pokemonName);
+      return item.name.includes(pokemonName.toLowerCase());
     });
+  };
+
+  const fetchPokemon = async () => {
+    return localData;
   };
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSearching(true);
 
-    if (searchInput?.current?.value === '') {
+    if (searchInput === '') {
       setIsSearching(false);
     }
 
-    const fetchPokemon = async () => {
-      // const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=5000');
-      // const dataPokemon = await res.json();
+    fetchPokemon()
+      .then((dataPokemon) => {
+        setFilteredData(filterPokemon(dataPokemon, searchInput));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-      // return dataPokemon;
-      return localData;
-    };
-
-    fetchPokemon().then((dataPokemon) => {
-      setFilteredData(filterPokemon(dataPokemon, searchInput?.current?.value));
-    });
+    const url = new URL(window.location.href);
+    url.searchParams.set('q', searchInput);
+    window.history.pushState({}, '', url);
   };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('q');
+
+    if (searchParam) {
+      setIsSearching(true);
+      setSearchInput(searchParam);
+      fetchPokemon()
+        .then((dataPokemon) => {
+          setFilteredData(filterPokemon(dataPokemon, searchParam));
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -67,7 +86,11 @@ export default function Home(props: any) {
                 type="text"
                 placeholder="search"
                 className="w-96"
-                ref={searchInput}
+                name="q"
+                value={searchInput}
+                onChange={(e) => {
+                  setSearchInput(e.currentTarget.value);
+                }}
               />
             </form>
           </div>
