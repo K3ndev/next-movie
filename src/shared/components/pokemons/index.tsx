@@ -14,44 +14,56 @@ export function Pokemons(props: PokemonType) {
   // loading state
   if (isLoading) {
     return (
-      <div className="w-full cursor-pointer">
-        <div className="max-h-80 w-full overflow-hidden bg-black	">
-          <div
-            className="aspect-square w-full scale-75 hover:scale-90"
-            style={{ width: '200', height: '200' }}
-          />
-        </div>
-        <div>
-          <h3>loading</h3>
+      <div className="flex h-full w-full border bg-white rounded-lg shadow-lg hover:scale-95 hover:bg-slate-100 duration-500 ease-in-out">
+        <div className="w-full cursor-pointer">
+          <div className="max-h-80 w-full overflow-hidden p-6">
+            <div className="bg-slate-700 rounded-md">
+              <div className="max-w-[254px] aspect-square"></div>
+            </div>
+          </div>
+          <div className="px-6 pb-6">
+            <div className="">
+              <h3 className="text-slate-700 text-lg font-bold">Loading</h3>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
   return (
-    <div className="flex h-full w-full border ">
+    <div
+      className="flex h-full w-full border bg-white rounded-lg shadow-lg hover:scale-95 hover:bg-slate-100 duration-500 ease-in-out
+
+"
+    >
       <Link
         className="w-full cursor-pointer"
         href={`/pokemon/${pokemonDATA.id}`}
       >
-        <div className="max-h-80 w-full overflow-hidden bg-black	">
-          <Image
-            src={
-              pokemonDATA.sprites.other['official-artwork'].front_default || ''
-            }
-            alt="pokemon"
-            width={200}
-            height={200}
-            quality={60}
-            className="aspect-square w-full scale-75 hover:scale-90"
-          />
+        <div className="max-h-80 w-full overflow-hidden p-6">
+          <div className="bg-slate-700 rounded-md">
+            <Image
+              src={
+                pokemonDATA.sprites.other['official-artwork'].front_default ||
+                ''
+              }
+              alt="pokemon"
+              width={200}
+              height={200}
+              quality={60}
+              className="aspect-square w-full scale-75"
+            />
+          </div>
         </div>
-        <div>
-          <h3>{pokemonDATA.name || ''}</h3>
+        <div className="px-6 pb-6">
+          <div className="">
+            <h3 className="text-slate-700  text-lg font-bold">
+              {pokemonDATA.name.charAt(0).toUpperCase() +
+                pokemonDATA.name.slice(1) || ''}
+            </h3>
+          </div>
         </div>
       </Link>
     </div>
   );
 }
-
-// todo: use the data from ssr
-// todo: use react.lazy on pokemon dynamic route

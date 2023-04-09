@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { useIntersection } from '@mantine/hooks';
 import useInfiniteFetch from '@/shared/hooks/useInfiniteFetch';
 import { Header, Footer, Pokemons } from '../../shared/components/index';
-// import FetchPokemon from '../../shared/hooks/FetchPokemon';
 import localData from '../../shared/data/pokemon.json';
+import Search from '../../shared/components/icons/search';
 
 export default function Home() {
   const { ref: interactionRef, entry } = useIntersection();
@@ -13,7 +13,6 @@ export default function Home() {
   const [filteredData, setFilteredData] = useState<any>();
   const pokemonsUrl = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20';
   const { DATA: pokemonsData } = useInfiniteFetch(entry, pokemonsUrl);
-  // const [filteredData, setFilteredData] = useState<any>();
 
   const filterPokemon = (dataPokemon: any, pokemonName: any) => {
     return dataPokemon.results.filter((item: { name: string }) => {
@@ -76,26 +75,32 @@ export default function Home() {
       <Header />
       <main className="bg-[#D9D9D9] ">
         <section className="my-3">
-          <div className="mb-3 flex justify-center">
+          <div className="mb-3 my-5 flex justify-center px-5">
             <form
               onSubmit={(e) => {
                 onSubmitHandler(e);
               }}
+              className="relative"
             >
-              <input
-                type="text"
-                placeholder="search"
-                className="w-96"
-                name="q"
-                value={searchInput}
-                onChange={(e) => {
-                  setSearchInput(e.currentTarget.value);
-                }}
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="search pokemon"
+                  className="w-full sm:w-96 p-2 rounded-md"
+                  name="q"
+                  value={searchInput}
+                  onChange={(e) => {
+                    setSearchInput(e.currentTarget.value);
+                  }}
+                />
+                <button type="submit" className="bg-slate-700 p-2 rounded-md">
+                  <Search className="text-white" />
+                </button>
+              </div>
             </form>
           </div>
 
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 px-5">
             {!isSearching &&
               pokemonsData?.pages.map((group: any) =>
                 group.response.map((pokemon: any) => {
