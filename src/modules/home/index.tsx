@@ -74,7 +74,7 @@ export default function Home() {
       <Header />
       <main className="bg-[#D9D9D9] ">
         <section className="my-3">
-          <div className="mb-3 my-5 flex justify-center px-5">
+          <div className="my-5 mb-3 flex justify-center px-5">
             <form
               onSubmit={(e) => {
                 onSubmitHandler(e);
@@ -85,21 +85,21 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="search pokemon"
-                  className="w-full sm:w-96 p-2 rounded-md"
+                  className="w-full rounded-md p-2 sm:w-96"
                   name="q"
                   value={searchInput}
                   onChange={(e) => {
                     setSearchInput(e.currentTarget.value);
                   }}
                 />
-                <button type="submit" className="bg-slate-700 p-2 rounded-md">
+                <button type="submit" className="rounded-md bg-slate-700 p-2">
                   <Search className="text-white" />
                 </button>
               </div>
             </form>
           </div>
 
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 px-5">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 px-5 md:grid-cols-3 lg:grid-cols-4">
             {!isSearching &&
               pokemonsData?.pages.map((group: any) =>
                 group.response.map((pokemon: any) => {

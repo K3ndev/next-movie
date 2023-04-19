@@ -14,16 +14,16 @@ export function Pokemons(props: PokemonType) {
   // loading state
   if (isLoading) {
     return (
-      <div className="flex h-full w-full border bg-white rounded-lg shadow-lg hover:scale-95 hover:bg-slate-100 duration-500 ease-in-out">
+      <div className="flex h-full w-full rounded-lg border bg-white shadow-lg duration-500 ease-in-out hover:scale-95 hover:bg-slate-100">
         <div className="w-full cursor-pointer">
           <div className="max-h-80 w-full overflow-hidden p-6">
-            <div className="bg-slate-700 rounded-md">
-              <div className="max-w-[254px] aspect-square"></div>
+            <div className="rounded-md bg-slate-700">
+              <div className="aspect-square max-w-[254px]"></div>
             </div>
           </div>
           <div className="px-6 pb-6">
             <div className="">
-              <h3 className="text-slate-700 text-lg font-bold">Loading</h3>
+              <h3 className="text-lg font-bold text-slate-700">Loading</h3>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@ export function Pokemons(props: PokemonType) {
   }
   return (
     <div
-      className="flex h-full w-full border bg-white rounded-lg shadow-lg hover:scale-95 hover:bg-slate-100 duration-500 ease-in-out
+      className="flex h-full w-full rounded-lg border bg-white shadow-lg duration-500 ease-in-out hover:scale-95 hover:bg-slate-100
 
 "
     >
@@ -41,7 +41,7 @@ export function Pokemons(props: PokemonType) {
         href={`/pokemon/${pokemonDATA.id}`}
       >
         <div className="max-h-80 w-full overflow-hidden p-6">
-          <div className="bg-slate-700 rounded-md">
+          <div className="rounded-md bg-slate-700">
             <Image
               src={
                 pokemonDATA.sprites.other['official-artwork'].front_default ||
@@ -57,7 +57,7 @@ export function Pokemons(props: PokemonType) {
         </div>
         <div className="px-6 pb-6">
           <div className="">
-            <h3 className="text-slate-700  text-lg font-bold">
+            <h3 className="text-lg  font-bold text-slate-700">
               {pokemonDATA.name.charAt(0).toUpperCase() +
                 pokemonDATA.name.slice(1) || ''}
             </h3>

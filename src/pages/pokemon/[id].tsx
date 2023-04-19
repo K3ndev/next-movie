@@ -1,37 +1,8 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import { Footer, Header } from '@/shared/components';
 import Image from 'next/image';
 
-const Pokemon = () => {
-  const router = useRouter();
-  const { id } = router.query;
-
-  // eslint-disable-next-line consistent-return
-  const fetchPokemon = async () => {
-    try {
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-      const data = await res.json();
-
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const { data, refetch } = useQuery(['pokemon'], fetchPokemon);
-
-  useEffect(() => {
-    if (data) {
-      if (Number(id) !== Number(data.id)) {
-        refetch();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+const Pokemon = ({ data }: any) => {
   return (
     <>
       <Head>
@@ -42,11 +13,11 @@ const Pokemon = () => {
       </Head>
       <Header />
       <main className="bg-[#D9D9D9] ">
-        <section className="my-3 max-w-7xl mx-auto">
-          <h2 className="text-center w-full mb-10 mt-9 text-4xl md:text-5xl">
+        <section className="my-3 mx-auto max-w-7xl">
+          <h2 className="mb-10 mt-9 w-full text-center text-4xl md:text-5xl">
             {data?.name}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="relative">
               <Image
                 src={data?.sprites.other['official-artwork'].front_default}
@@ -57,8 +28,8 @@ const Pokemon = () => {
                 className="aspect-square w-full scale-75"
               />
             </div>
-            <div className="px-5 md:mx-0 flex flex-col w-full h-full md:justify-center gap-10">
-              <div className="bg-slate-700 text-white p-6 w-fit rounded-lg">
+            <div className="flex h-full w-full flex-col gap-10 px-5 md:mx-0 md:justify-center">
+              <div className="w-fit rounded-lg bg-slate-700 p-6 text-white">
                 {data?.stats.map((stat: any, index: any) => (
                   <div className="flex justify-between gap-7" key={index}>
                     <p className="">{stat.stat.name}:</p>
@@ -66,7 +37,7 @@ const Pokemon = () => {
                   </div>
                 ))}
               </div>
-              <div className="bg-slate-700 text-white p-6 w-fit rounded-lg">
+              <div className="w-fit rounded-lg bg-slate-700 p-6 text-white">
                 <div className="flex gap-2 ">
                   <h3 className="text-cyan-300">abilities: </h3>
                   {data?.abilities.map((item: any, index: any) => (
@@ -90,3 +61,14 @@ const Pokemon = () => {
 };
 
 export default Pokemon;
+
+export async function getServerSideProps(context: any) {
+  const { id } = context.query; // Get the id parameter from the query string
+
+  // Fetch data from external API
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+  const data = await res.json();
+
+  // Pass data to the page via props
+  return { props: { data } };
+}
