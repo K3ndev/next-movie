@@ -3,8 +3,12 @@ import { DebouncedValue } from "./types";
 
 /**
  * Custom hook that debounce value changes with minimal renders.
- * @sample
- * ```const debouncedValue = useDebounce<string>(valueState, 500)```
+
+ * @example
+ *
+ * ```javascript
+ * const debouncedValue = useDebounce<string>(valueState, 500)
+ * ```
  *
  * @template T - The type of the value being debounced.
  * @param {T} value - The value to be debounced.
