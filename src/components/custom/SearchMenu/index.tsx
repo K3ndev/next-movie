@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,72 @@ const HealthList = [
 ];
 const MealTypeList = ["Breakfast", "Dinner", "Lunch", "Snack", "Teatime"];
 
+type SearchParamState = {
+  DietList: { [key: string]: boolean };
+  HealthList: { [key: string]: boolean };
+  MealTypeList: { [key: string]: boolean };
+};
+
 export function SearchMenu() {
+  const [searchParam, setSearchParam] = useState<SearchParamState>({
+    DietList: {},
+    HealthList: {},
+    MealTypeList: {},
+  });
+
+  // setup the searchParam
+  useEffect(() => {
+    const initialDietList: SearchParamState["DietList"] = {};
+    const initialHealthList: SearchParamState["HealthList"] = {};
+    const initialMealTypeList: SearchParamState["MealTypeList"] = {};
+
+    DietList.forEach((diet) => {
+      initialDietList[diet] = false;
+    });
+
+    HealthList.forEach((health) => {
+      initialHealthList[health] = false;
+    });
+
+    MealTypeList.forEach((mealType) => {
+      initialMealTypeList[mealType] = false;
+    });
+
+    setSearchParam({
+      DietList: initialDietList,
+      HealthList: initialHealthList,
+      MealTypeList: initialMealTypeList,
+    });
+  }, []);
+
+  const handleDietChange = (diet: string) => {
+    setSearchParam((prevState) => ({
+      ...prevState,
+      DietList: {
+        ...prevState.DietList,
+        [diet]: !prevState.DietList[diet],
+      },
+    }));
+  };
+  const handleHealthChange = (diet: string) => {
+    setSearchParam((prevState) => ({
+      ...prevState,
+      HealthList: {
+        ...prevState.HealthList,
+        [diet]: !prevState.HealthList[diet],
+      },
+    }));
+  };
+  const handleMealTypeChange = (diet: string) => {
+    setSearchParam((prevState) => ({
+      ...prevState,
+      MealTypeList: {
+        ...prevState.MealTypeList,
+        [diet]: !prevState.MealTypeList[diet],
+      },
+    }));
+  };
+
   return (
     <HoverCard openDelay={3}>
       <HoverCardTrigger asChild>
@@ -49,7 +115,11 @@ export function SearchMenu() {
                 {DietList.map((item, index) => {
                   return (
                     <div className="flex items-center space-x-1" key={index}>
-                      <Checkbox id={item} />
+                      <Checkbox
+                        id={item}
+                        checked={searchParam.DietList[`${item}`]}
+                        onClick={() => handleDietChange(item)}
+                      />
                       <label
                         htmlFor={item}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer select-none"
@@ -67,7 +137,11 @@ export function SearchMenu() {
                 {HealthList.map((item, index) => {
                   return (
                     <div className="flex items-center space-x-1" key={index}>
-                      <Checkbox id={item} />
+                      <Checkbox
+                        id={item}
+                        checked={searchParam.HealthList[`${item}`]}
+                        onClick={() => handleHealthChange(item)}
+                      />
                       <label
                         htmlFor={item}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none cursor-pointer"
@@ -85,7 +159,11 @@ export function SearchMenu() {
                 {MealTypeList.map((item, index) => {
                   return (
                     <div className="flex items-center space-x-1" key={index}>
-                      <Checkbox id={item} />
+                      <Checkbox
+                        id={item}
+                        checked={searchParam.MealTypeList[`${item}`]}
+                        onClick={() => handleMealTypeChange(item)}
+                      />
                       <label
                         htmlFor={item}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none cursor-pointer"
