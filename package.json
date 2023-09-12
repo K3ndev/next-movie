@@ -11,8 +11,10 @@
     "check-update": "npx npm-check-updates"
   },
   "dependencies": {
+    "@mantine/hooks": "^6.0.20",
     "@radix-ui/react-icons": "^1.3.0",
-    "@tanstack/react-query": "^4.32.0",
+    "@tanstack/react-query": "^4.35.0",
+    "@tanstack/react-query-devtools": "^4.35.0",
     "@types/node": "20.4.3",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",

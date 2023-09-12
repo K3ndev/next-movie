@@ -6,7 +6,7 @@ export function Layout(props: LayoutProps) {
   return (
     <>
       <Header />
-      <main>{props.children}</main>
+      <main className="bg-[#D9D9D9]">{props.children}</main>
       <Footer />
     </>
   );

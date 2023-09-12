@@ -4,7 +4,7 @@ import { GenericPanelProps } from "./types";
 export function GenericPanel({ children, className = "" }: GenericPanelProps) {
   return (
     <section
-      className={`mx-auto w-full max-w-5xl px-5 py-5 md:py-7 ${className}`}
+      className={`mx-auto max-w-7xl w-full ${className}`}
     >
       {children}
     </section>
