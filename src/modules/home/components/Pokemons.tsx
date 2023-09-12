@@ -1,18 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import useFetchPokemon from '@/shared/hooks/useFetchPokemon';
+import { useFetchPokemon } from '../hooks/index';
 
 type PokemonType = {
   pokemonURL: string;
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export function Pokemons(props: PokemonType) {
+export const Pokemons = (props: PokemonType) => {
   const { pokemonURL } = props;
   const { pokemonDATA, isLoading } = useFetchPokemon(pokemonURL);
 
   // loading state
-  if (isLoading) {
+  if (isLoading || !pokemonDATA) {
     return (
       <div className="flex h-full w-full rounded-lg border bg-white shadow-lg duration-500 ease-in-out hover:scale-95 hover:bg-slate-100">
         <div className="w-full cursor-pointer">

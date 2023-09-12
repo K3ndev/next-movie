@@ -3,13 +3,12 @@ import { useEffect, useRef } from 'react';
 
 // https://pokeapi.co/api/v2/pokemon?offset=0&limit=20
 
-// eslint-disable-next-line import/prefer-default-export
-const useInfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
+export const useInfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
   const delayRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchPokemons = async ({ pageParam = url }) => {
     const res = await fetch(pageParam);
-    const { results, next } = await res.json();
+    const { results, next } = await res.json() as { results: {name: string, url: string}[], next: string };
 
     return { response: results, nextPage: next };
   };
@@ -34,5 +33,3 @@ const useInfiniteFetch = (entry: IntersectionObserverEntry, url: string) => {
   }, [entry?.isIntersecting, fetchNextPage]);
   return { DATA };
 };
-
-export default useInfiniteFetch;

@@ -1,38 +1,77 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next Template, Typescript, tailwind, and more
 
-## Getting Started
+This template is designed to help you kickstart your Next.js projects with the following libraries and tools: Next.js, TypeScript, Tailwind CSS, Shacdn-ui components, Husky for Git hooks, AOS for animations, zod for validation, tanstack-query for asynchronous state management, and ESLint for code linting.
 
-First, run the development server:
+### Folder Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+/
+|- modules/
+   |- home 
+      |- components/
+      |- hooks/
+      |- contant/
+      |- helpers/
+      |- indes.tsx
+|- pages/
+   |- _document.tsx
+   |- _app.tsx
+   |- index.tsx
+|- shared/
+   |- components/
+   |- hooks/
+   |- lib/
+   |- styles/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### modules/
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- this directory contains separate modules or sections of your application. Each module typically has its own set of pages, components, hooks, and other related files. This structure promotes modularity and keeps your codebase organized.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+#### pages/
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- this directory holds the main pages of your application.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+#### shared/
 
-## Learn More
+- this directory contains common functionality and resources that are used across different parts of your application.
 
-To learn more about Next.js, take a look at the following resources:
+### Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Click "Use this template" above
+2. Then create a new repository.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000/) with your browser to see the result. You can start editing the page by modifying `modules/home/index.tsx`. The page auto-updates as you edit the file.
 
-## Deploy on Vercel
+### Addional Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* This template uses shacdn-ui, just add the component then youre good to go
+* Use aos library to add elegant animations
+* Husky is configured to run pre-commit hooks, ensuring code quality before each commit
+* CSS Layout Template
+```css
+/* Layout template you can use */
+/* It will split the header, main, and footer similar to a hamburger menu */
+#__next {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+main {
+  flex: 1 1 0%;
+}
+
+/* CSS debugger */
+* {
+  box-sizing: border-box;
+  outline: 1px solid limegreen !important;
+}
+
+```
+
+#### Next Goal
+
+* Create `login.tsx` for authentication readiness.
+* Add sst setup
+* Transition to using biome instead of ESLint and Prettier.

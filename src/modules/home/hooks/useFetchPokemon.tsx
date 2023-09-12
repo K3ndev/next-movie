@@ -1,19 +1,31 @@
 import { useEffect, useState } from 'react';
 
+interface pokemonDATAType {
+  id: number;
+  name: string;
+  sprites: {
+    other: {
+      "official-artwork": {
+        front_default: string;
+      };
+    };
+  };
+}
+
 // i don't think we need to do some catching here
-function useFetchPokemon(pokemonURL: string) {
-  const [pokemonDATA, setPokemonDATA] = useState<any>();
+export const useFetchPokemon = (pokemonURL: string) => {
+  const [pokemonDATA, setPokemonDATA] = useState<pokemonDATAType>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchPokemon = async () => {
     const res = await fetch(pokemonURL);
-    const data = await res.json();
+    const data = await res.json() as pokemonDATAType;
 
     return data;
   };
 
   useEffect(() => {
-    fetchPokemon().then((data: any) => {
+    fetchPokemon().then((data) => {
       setPokemonDATA(data);
       setIsLoading(false);
     });
@@ -21,5 +33,3 @@ function useFetchPokemon(pokemonURL: string) {
   }, []);
   return { pokemonDATA, isLoading };
 }
-
-export default useFetchPokemon;
