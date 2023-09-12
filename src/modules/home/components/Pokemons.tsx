@@ -12,7 +12,7 @@ export const Pokemons = (props: PokemonType) => {
   const { pokemonDATA, isLoading } = useFetchPokemon(pokemonURL);
 
   // loading state
-  if (isLoading) {
+  if (isLoading || !pokemonDATA) {
     return (
       <div className="flex h-full w-full rounded-lg border bg-white shadow-lg duration-500 ease-in-out hover:scale-95 hover:bg-slate-100">
         <div className="w-full cursor-pointer">
