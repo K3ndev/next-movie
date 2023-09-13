@@ -47,6 +47,7 @@ const Pokemon = (props: { data: PokemonType }) => {
                             height={300}
                             quality={60}
                             className="aspect-square w-full scale-75"
+                            priority
                         />
                     </div>
                     <div className="flex h-full w-full flex-col gap-10 px-5 md:mx-0 md:justify-center">

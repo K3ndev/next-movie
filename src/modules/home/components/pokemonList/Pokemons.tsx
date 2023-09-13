@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useFetchPokemon } from '../hooks/index';
+import { useFetchPokemon } from '../../hooks/index';
+import ImageLoader from "./loader"
 
 type PokemonType = {
   pokemonURL: string;
@@ -48,10 +49,11 @@ export const Pokemons = (props: PokemonType) => {
                 ''
               }
               alt="pokemon"
-              width={200}
-              height={200}
-              quality={60}
+              width={150}
+              height={150}
+              quality={20}
               className="aspect-square w-full scale-75"
+              priority
             />
           </div>
         </div>
