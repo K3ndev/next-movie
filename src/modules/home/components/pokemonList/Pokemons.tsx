@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useFetchPokemon } from '../../hooks/index';
-import ImageLoader from "./loader"
 
 type PokemonType = {
   pokemonURL: string;
