@@ -1,5 +1,6 @@
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Button } from "@/shared/components/ui/button"
 import {
   Dialog,
@@ -28,17 +29,58 @@ import {
 
 export function Header() {
 
+  const [isModal, setIsModal] = useState<boolean>(false)
   const loginUsername = useRef<HTMLInputElement | null>(null);
   const loginPassword = useRef<HTMLInputElement | null>(null)
   const createUsername = useRef<HTMLInputElement | null>(null);
   const createPassword = useRef<HTMLInputElement | null>(null)
+
+  const router = useRouter();
+  const { modalState } = router.query;
+  const [tabState, setTabState] = useState<string>("login")
+
+  const tabHandler = () => {
+    if(tabState === "login"){
+      setTabState("create")
+    } 
+    if(tabState === "create") {
+      setTabState("login")
+    }
+  }
+
+  useEffect(() => {
+    if(isModal){
+      let queryParams = `modalState=${tabState}`;
+      router.replace({
+        pathname: router.pathname,
+        query: queryParams,
+      });
+    } else {
+      router.replace({
+        pathname: router.pathname,
+        query: {},
+      }); 
+    }
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabState, isModal])
+
+  useEffect(() => {
+    if(modalState){
+      setIsModal(true)
+      if (typeof modalState === "string") {
+        setTabState(modalState)
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
   return (
     <header className="">
       <nav className="mx-auto max-w-7xl">
         <div className="flex justify-between p-7">
           <Link href="/">NextPokemon</Link>
           <div className='flex gap-2'>
-            <Dialog>
+            <Dialog open={isModal} onOpenChange={()=>{setIsModal(!isModal)}}>
               <DialogTrigger asChild>
                 <Button>Account</Button>
               </DialogTrigger>
@@ -46,7 +88,7 @@ export function Header() {
                 <DialogHeader>
                   <DialogTitle>Hello!</DialogTitle>
                 </DialogHeader>
-                <Tabs defaultValue="login" className="">
+                <Tabs value={tabState}  onValueChange={tabHandler} className="">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="create">Create Account</TabsTrigger>
@@ -107,3 +149,5 @@ export function Header() {
     </header>
   );
 }
+
+// todo! : aria-controls issue, are from dialog component
