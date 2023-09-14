@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from "react"
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { Button } from "@/shared/components/ui/button"
 import {
   Dialog,
@@ -25,15 +24,21 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/shared/components/ui/tabs"
+import { useAuth, useSignUp, useSignIn } from "@clerk/nextjs";
 
 
 export function Header() {
   const [isModal, setIsModal] = useState<boolean>(false)
   const [isModalFirstRender, setIsModalFirstRender] = useState<boolean>(false)
-  const loginUsername = useRef<HTMLInputElement | null>(null);
+  const loginEmail = useRef<HTMLInputElement | null>(null)
   const loginPassword = useRef<HTMLInputElement | null>(null)
-  const createUsername = useRef<HTMLInputElement | null>(null);
+  const createEmail = useRef<HTMLInputElement | null>(null)
   const createPassword = useRef<HTMLInputElement | null>(null)
+  const code = useRef<HTMLInputElement | null>(null)
+  const [pendingVerification, setpendingVerification] = useState<boolean>(false)
+
+  const [loadingIn, setLoadingIn] = useState(false)
+  const [loadingUp, setLoadingUp] = useState(false)
 
   const [tabState, setTabState] = useState<string>("")
 
@@ -47,111 +52,147 @@ export function Header() {
     }
   }
 
-  // useEffect(() => {
-  //   const query = { ...router.query };
+  const { isSignedIn, signOut } = useAuth()
+  const { isLoaded, setActive, signUp } = useSignUp()
+  const {isLoaded: isLoadedIn, setActive: setActiveIn, signIn} = useSignIn()
+
+  const LoginHandler = async(e:any) => {
+    e.preventDefault()
+
+    if (!isLoadedIn) {
+      return;
+    }
+
+    try {
+      const completeSignIn = await signIn.create({
+        identifier: loginEmail!.current!.value,
+        password: loginPassword!.current!.value,
+      })
+
+      if(completeSignIn.status !== "complete"){
+        console.log('not complete')
+      }
+
+      if(completeSignIn.status === "complete"){
+        setActiveIn({ session: completeSignIn.createdSessionId });
+        setIsModal(false)
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const CreateHandler = async (e: any) => {
+    e.preventDefault();
+    if (!isLoaded) {
+      return;
+    }
+
+    try {
+      await signUp.create({
+        emailAddress: createEmail!.current!.value,
+        password: createPassword!.current!.value
+      })
+
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+
+      setpendingVerification(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const verifyHandler = async(e:any) => {
+    e.preventDefault();
+    if (!isLoaded) {
+      return;
+    }
+    try {
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
+        code: code!.current!.value
+      })
+
+      if (completeSignUp.status !== 'complete'){
+        console.log('not complete')
+      }
+
+      if (completeSignUp.status === 'complete'){
+        console.log('complete')
+        await setActive({session: completeSignUp.createdSessionId})
+        setIsModal(false)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
-  //   if (isModal) {
-  //     // Set the 'm' query parameter
-  //     query.m = tabState;
-
-  //     // Construct the query string
-  //     const queryString = Object.entries(query)
-  //       .map(([key, value]) => `${key}=${value}`)
-  //       .join('&');
-
-
-  //     // Replace the current URL with the updated query string
-  //     router.replace({
-  //       pathname: router.pathname,
-  //       query: queryString,
-  //     });
-  //   } else {
-  //     // Remove the 'm' query parameter if it exists
-  //     delete query.m;
-
-  //     // Construct the query string
-  //     const queryString = Object.entries(query)
-  //       .map(([key, value]) => `${key}=${value}`)
-  //       .join('&');
-
-  //     // Replace the current URL with the updated query string
-  //     router.replace({
-  //       pathname: router.pathname,
-  //       query: queryString,
-  //     });
-  //   }
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [tabState, isModal])
-  
-
-  // http://localhost:3000/?q=pikachu&m=create -> it works
-  
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const searchParam = urlParams.get('m');
 
+
     if (searchParam === "create") {
       setIsModal(true)
       setTabState("create")
-    } 
+    }
     if (searchParam === "login") {
       setIsModal(true)
       setTabState("login")
-    } 
+    }
+    
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    if(isModalFirstRender){
+    if (isModalFirstRender) {
       const urlParams = new URLSearchParams(window.location.search);
       urlParams.set('m', tabState);
 
       window.history.replaceState({}, '', `?${urlParams.toString()}`);
     }
-    if(isModal){
+    if (isModal) {
       setIsModalFirstRender(true)
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabState])
 
   useEffect(() => {
-    if(!isModal){
+    if (!isModal) {
       const urlParams = new URLSearchParams(window.location.search);
 
       if (urlParams.has('m')) {
-          urlParams.delete('m');
-          const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+        urlParams.delete('m');
+        const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
 
-          window.history.replaceState({}, '', newUrl);
+        window.history.replaceState({}, '', newUrl);
       }
     }
-    if(isModal){
+    if (isModal) {
       const urlParams = new URLSearchParams(window.location.search);
       urlParams.set('m', tabState);
 
       window.history.replaceState({}, '', `?${urlParams.toString()}`);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModal])
 
-  console.log({isModal: isModal, tabState: tabState})
   return (
     <header className="">
       <nav className="mx-auto max-w-7xl">
         <div className="flex justify-between p-7">
           <Link href="/">NextPokemon</Link>
           <div className='flex gap-2'>
-            <Dialog open={isModal} onOpenChange={() => { 
+            {!isSignedIn && <Dialog open={isModal} onOpenChange={() => {
               setIsModal(!isModal)
-             }}>
+            }}>
               <DialogTrigger asChild>
-                <Button onClick={()=>{
+                <Button onClick={() => {
                   setIsModalFirstRender(true)
-                  if(tabState === ""){
+                  if (tabState === "") {
                     setTabState("login")
                   }
                 }}>Account</Button>
@@ -175,16 +216,16 @@ export function Header() {
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="space-y-1">
-                          <Label htmlFor="username">Username</Label>
-                          <Input id="username" type='text' ref={loginUsername} placeholder="" />
+                          <Label htmlFor="loginEmail">Username</Label>
+                          <Input id="loginEmail" type='email' ref={loginEmail} placeholder="email@sample.com" />
                         </div>
                         <div className="space-y-1">
                           <Label htmlFor="password">Password</Label>
-                          <Input id="password" type='password' ref={loginPassword} />
+                          <Input id="password" type='password' ref={loginPassword} placeholder="password" />
                         </div>
                       </CardContent>
                       <CardFooter>
-                        <Button>Save changes</Button>
+                        <Button onClick={LoginHandler}>Login</Button>
                       </CardFooter>
                     </Card>
                   </TabsContent>
@@ -197,24 +238,32 @@ export function Header() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-2">
-                        <div className="space-y-1">
-                          <Label htmlFor="createUsername">Username</Label>
-                          <Input id="createUsername" type="text" ref={createUsername} />
+                        {!pendingVerification && <><div className="space-y-1">
+                          <Label htmlFor="createEmail">Username</Label>
+                          <Input id="createEmail" type="email" ref={createEmail} placeholder="email@sample.com" />
                         </div>
-                        <div className="space-y-1">
-                          <Label htmlFor="createPassword">Password</Label>
-                          <Input id="createPassword" type="password" ref={createPassword} />
-                        </div>
+                          <div className="space-y-1">
+                            <Label htmlFor="createPassword">Password</Label>
+                            <Input id="createPassword" type="password" ref={createPassword} placeholder="password must contain 8 or more" />
+                          </div></>}
+                        {pendingVerification && <div className="space-y-1">
+                          <Label htmlFor="code">Code</Label>
+                          <Input id="code" type="text" ref={code} placeholder="code" />
+                        </div>}
                       </CardContent>
                       <CardFooter>
-                        <Button>Submit</Button>
+                        {!pendingVerification && <Button onClick={CreateHandler}>Submit</Button>}
+                        {pendingVerification && <Button onClick={verifyHandler}>Verify</Button>}
                       </CardFooter>
                     </Card>
                   </TabsContent>
                 </Tabs>
               </DialogContent>
-            </Dialog>
-            <Button onClick={() => { console.log('hi') }}>Logout</Button>
+            </Dialog>}
+            {isSignedIn && <Button onClick={() => { 
+              signOut()
+              setIsModal(false)
+             }}>Logout</Button>}
           </div>
         </div>
       </nav>
@@ -223,3 +272,4 @@ export function Header() {
 }
 
 // todo! : aria-controls issue, are from dialog component
+// todo! : when the user loggein there's a bug in modal thing
