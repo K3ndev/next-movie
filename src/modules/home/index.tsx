@@ -53,9 +53,11 @@ export default function Home() {
       .catch((_) => {
       });
 
-    const url = new URL(window.location.href);
-    url.searchParams.set('q', searchInput);
-    window.history.pushState({}, '', url);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('q', searchInput);
+
+    window.history.replaceState({}, '', `?${urlParams.toString()}`);
+
   };
 
   useEffect(() => {
